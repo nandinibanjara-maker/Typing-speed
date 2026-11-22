@@ -1,0 +1,564 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeBlitz ✨ Typing Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root{
+ --bg:#f8f5ff;--card:#ffffff;--text:#39324d;--muted:#958da8;
+ --primary:#9879e8;--secondary:#f5b7d2;--soft:#eee8ff;
+ --border:#eee8f7;--shadow:0 10px 35px rgba(93,67,140,.08);
+ --green:#65c9a4;--red:#ee8297;--yellow:#f3c66b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:.3s}
+button,input,select{font:inherit}
+button{cursor:pointer;border:0}
+.app{display:flex;min-height:100vh}
+.sidebar{width:245px;background:var(--card);border-right:1px solid var(--border);padding:25px 17px;position:fixed;inset:0 auto 0 0;z-index:10;display:flex;flex-direction:column}
+.logo{display:flex;align-items:center;gap:11px;padding:5px 10px 30px}
+.logo-icon{width:43px;height:43px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:15px;display:grid;place-items:center;color:white;font-size:23px}
+.logo h2{font-size:22px;font-weight:900;letter-spacing:-1px}
+.logo small{display:block;font-size:10px;color:var(--muted);letter-spacing:2px}
+.nav-label{font-size:10px;letter-spacing:2px;color:var(--muted);font-weight:900;padding:12px}
+.nav-btn{width:100%;background:transparent;color:var(--muted);padding:13px 14px;text-align:left;border-radius:13px;font-weight:800;display:flex;gap:12px;align-items:center;margin:3px 0;transition:.2s}
+.nav-btn:hover,.nav-btn.active{background:var(--soft);color:var(--primary)}
+.nav-btn span{font-size:19px}
+.sidebar-bottom{margin-top:auto;background:var(--soft);padding:16px;border-radius:17px;font-size:12px;color:var(--muted)}
+.sidebar-bottom strong{color:var(--text);font-size:14px}
+.main{margin-left:245px;width:calc(100% - 245px);padding:30px 38px;max-width:1600px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:27px;gap:15px}
+.welcome small{color:var(--primary);font-weight:900;letter-spacing:2px;font-size:11px}
+.welcome h1{font-size:30px;font-weight:900;margin-top:4px}
+.welcome p{color:var(--muted);font-size:14px}
+.profile{display:flex;align-items:center;gap:10px;background:var(--card);padding:9px 15px;border-radius:15px;box-shadow:var(--shadow)}
+.avatar{width:37px;height:37px;border-radius:13px;background:var(--soft);display:grid;place-items:center;font-size:20px}
+.profile small{display:block;color:var(--muted);font-size:11px}
+.page{display:none;animation:fade .3s}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hero{background:linear-gradient(120deg,#b6a1f2,#e9b9d5);border-radius:25px;padding:32px;color:white;position:relative;overflow:hidden;margin-bottom:22px;min-height:180px}
+.hero:after{content:"⌨️";position:absolute;right:7%;top:15px;font-size:100px;opacity:.2;transform:rotate(-15deg)}
+.hero small{font-weight:900;letter-spacing:2px;font-size:11px}
+.hero h2{font-size:35px;line-height:1.25;margin:9px 0;max-width:490px}
+.hero p{font-size:14px;opacity:.9}
+.btn{padding:12px 19px;border-radius:12px;background:var(--primary);color:white;font-weight:900;transition:.2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.btn.light{background:white;color:#8064ce;margin-top:18px}
+.btn.outline{background:transparent;color:var(--primary);border:1px solid var(--primary)}
+.btn.small{padding:9px 13px;font-size:12px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:22px}
+.stat,.panel,.test-stat{background:var(--card);border:1px solid var(--border);border-radius:19px;padding:20px;box-shadow:var(--shadow)}
+.stat-top{display:flex;justify-content:space-between;align-items:center}
+.stat-icon{width:38px;height:38px;background:var(--soft);border-radius:12px;display:grid;place-items:center;font-size:19px}
+.stat-number{font-size:34px;font-weight:900;margin-top:10px}
+.stat-label{color:var(--muted);font-size:12px;font-weight:800}
+.content-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
+.panel{margin-bottom:18px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px;gap:10px}
+.panel-head h3{font-size:19px;font-weight:900}
+.panel-head p{color:var(--muted);font-size:12px}
+.chart{height:170px;display:flex;align-items:end;justify-content:space-around;gap:12px;padding-top:15px}
+.bar-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;height:100%;justify-content:end}
+.bar{width:65%;max-width:35px;border-radius:9px 9px 4px 4px;background:linear-gradient(180deg,var(--secondary),var(--primary));min-height:4px;transition:.3s}
+.bar-wrap small{color:var(--muted);font-size:11px}
+.progress-track{height:9px;background:var(--soft);border-radius:20px;overflow:hidden;margin:10px 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary));border-radius:20px}
+.badge-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.badge-item{text-align:center;background:var(--bg);padding:13px 5px;border-radius:13px}
+.badge-item span{font-size:27px}
+.badge-item strong{display:block;font-size:11px;margin-top:5px}
+.badge-item small{font-size:10px;color:var(--muted)}
+.section-title{margin:5px 0 22px}
+.section-title h2{font-size:26px;font-weight:900}
+.section-title p{color:var(--muted);font-size:14px}
+.test-layout{display:grid;grid-template-columns:1fr 265px;gap:18px;align-items:start}
+.test-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:15px}
+.test-stat{text-align:center;padding:14px 7px}
+.test-stat strong{display:block;font-size:28px;font-weight:900}
+.test-stat span{font-size:11px;color:var(--muted);font-weight:800}
+.test-card{background:var(--card);border:1px solid var(--border);padding:24px;border-radius:20px;box-shadow:var(--shadow)}
+.test-controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-bottom:18px}
+select{background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px;font-weight:700;outline:none}
+.passage{font-size:24px;line-height:2;letter-spacing:.3px;font-weight:600;color:var(--muted);background:var(--bg);border-radius:15px;padding:22px;margin-bottom:16px;min-height:150px;overflow-wrap:anywhere}
+.passage span.correct{color:var(--green)}
+.passage span.wrong{color:var(--red);background:#ffe3e9;border-radius:3px}
+.passage span.current{border-bottom:3px solid var(--primary)}
+.typing-area{width:100%;min-height:115px;resize:vertical;padding:17px;border:2px solid var(--border);background:var(--card);color:var(--text);border-radius:14px;font-size:19px;line-height:1.8;outline:none}
+.typing-area:focus{border-color:var(--primary)}
+.typing-area:disabled{opacity:.6}
+.test-side .panel{padding:18px}
+.timer{font-size:48px;font-weight:900;text-align:center;color:var(--primary)}
+.timer-label{text-align:center;font-size:11px;color:var(--muted);font-weight:900;letter-spacing:2px}
+.side-stat{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px}
+.side-stat span{color:var(--muted)}
+.keyboard{display:grid;gap:5px;margin-top:15px}
+.key-row{display:flex;justify-content:center;gap:4px}
+.key{flex:1;max-width:35px;height:32px;border-radius:6px;background:var(--soft);color:var(--text);font-size:10px;font-weight:900}
+.key.active{background:var(--primary);color:white;transform:translateY(-2px)}
+.history-table{width:100%;border-collapse:collapse}
+.history-table th,.history-table td{text-align:left;padding:13px 10px;border-bottom:1px solid var(--border);font-size:13px}
+.history-table th{color:var(--muted);font-size:11px}
+.empty{text-align:center;padding:35px;color:var(--muted)}
+.setting-row{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:18px 0;border-bottom:1px solid var(--border)}
+.setting-row p{font-size:12px;color:var(--muted)}
+.setting-row input[type=range]{accent-color:var(--primary);max-width:160px}
+.theme-options{display:flex;gap:9px;flex-wrap:wrap}
+.theme-dot{width:34px;height:34px;border-radius:50%;border:3px solid white;outline:1px solid var(--border)}
+.theme-dot.selected{outline:3px solid var(--primary)}
+.result-modal{position:fixed;inset:0;background:#1f183b88;z-index:50;display:none;place-items:center;padding:15px}
+.result-modal.show{display:grid}
+.result-box{background:var(--card);padding:30px;border-radius:25px;width:min(440px,100%);text-align:center;box-shadow:var(--shadow);animation:pop .35s}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.result-emoji{font-size:55px}
+.result-box h2{font-size:27px;margin:8px 0}
+.result-score{font-size:70px;color:var(--primary);font-weight:900}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:17px 0}
+.result-grid div{background:var(--bg);padding:12px;border-radius:12px}
+.result-grid strong{font-size:20px;display:block}
+.result-grid small{color:var(--muted);font-size:10px}
+.confetti{position:fixed;top:-20px;width:10px;height:15px;z-index:100;animation:fall 2.5s linear forwards;pointer-events:none}
+@keyframes fall{to{transform:translateY(110vh) rotate(700deg);opacity:0}}
+.toast{position:fixed;bottom:25px;right:25px;background:var(--text);color:white;padding:14px 20px;border-radius:13px;z-index:200;opacity:0;transform:translateY(15px);transition:.3s;pointer-events:none}
+.toast.show{opacity:1;transform:none}
+.mobile-menu{display:none}
+@media(max-width:1050px){.stats{grid-template-columns:repeat(2,1fr)}.test-layout{grid-template-columns:1fr}.test-side{display:grid;grid-template-columns:1fr 1fr;gap:12px}.content-grid{grid-template-columns:1fr}}
+@media(max-width:720px){
+ .sidebar{width:75px;padding:15px 8px}.logo{padding:5px 7px 25px}.logo h2,.logo small,.nav-btn .nav-text,.nav-label,.sidebar-bottom{display:none}
+ .logo-icon{width:45px}.nav-btn{justify-content:center;padding:13px 5px}.nav-btn span{font-size:21px}
+ .main{margin-left:75px;width:calc(100% - 75px);padding:20px 14px}
+ .welcome h1{font-size:22px}.welcome p{font-size:12px}.profile{padding:7px}.profile>div:last-child{display:none}
+ .hero{padding:23px;min-height:170px}.hero h2{font-size:26px}.hero:after{font-size:65px;right:3%}
+ .stats{gap:9px}.stat{padding:14px}.stat-number{font-size:27px}
+ .test-stats{grid-template-columns:repeat(2,1fr)}.passage{font-size:19px;padding:15px}
+ .test-card{padding:14px}.test-side{grid-template-columns:1fr}
+ .history-table th,.history-table td{padding:9px 5px;font-size:11px}
+ .section-title h2{font-size:22px}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+<aside class="sidebar">
+ <div class="logo"><div class="logo-icon">⌨</div><div><h2>TypeBlitz</h2><small>TYPE YOUR MAGIC</small></div></div>
+ <div class="nav-label">WORKSPACE</div>
+ <button class="nav-btn active" onclick="showPage('dashboard',this)"><span>🏠</span><span class="nav-text">Dashboard</span></button>
+ <button class="nav-btn" onclick="showPage('test',this)"><span>⌨️</span><span class="nav-text">Typing Test</span></button>
+ <button class="nav-btn" onclick="showPage('practice',this)"><span>🎯</span><span class="nav-text">Practice Lab</span></button>
+ <div class="nav-label">YOUR JOURNEY</div>
+ <button class="nav-btn" onclick="showPage('history',this)"><span>📊</span><span class="nav-text">Score History</span></button>
+ <button class="nav-btn" onclick="showPage('achievements',this)"><span>🏆</span><span class="nav-text">Achievements</span></button>
+ <button class="nav-btn" onclick="showPage('settings',this)"><span>⚙️</span><span class="nav-text">Settings</span></button>
+ <div class="sidebar-bottom"><strong>✨ Keep glowing!</strong><br>Every keystroke makes you better. Keep practising!</div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+ <div class="welcome"><small>YOUR PERSONAL TYPING STUDIO</small><h1 id="greeting">Hey, Typing Star! ✨</h1><p>A little practice, a lot of progress.</p></div>
+ <div class="profile"><div class="avatar">🌷</div><div><strong>Typing Star</strong><small id="levelText">Level 1 Explorer</small></div></div>
+</header>
+
+<section class="page active" id="dashboard">
+ <div class="hero">
+  <small>WELCOME TO YOUR HAPPY PLACE</small>
+  <h2>Type faster. Dream bigger. Shine brighter. ✨</h2>
+  <p>Your typing journey starts with one little keystroke.</p>
+  <button class="btn light" onclick="goTo('test')">Start typing →</button>
+ </div>
+ <div class="stats">
+  <div class="stat"><div class="stat-top"><span class="stat-label">BEST WPM</span><span class="stat-icon">⚡</span></div><div class="stat-number" id="bestWpm">0</div><div class="stat-label">Words per minute</div></div>
+  <div class="stat"><div class="stat-top"><span class="stat-label">BEST ACCURACY</span><span class="stat-icon">🎯</span></div><div class="stat-number" id="bestAccuracy">0%</div><div class="stat-label">Your precision</div></div>
+  <div class="stat"><div class="stat-top"><span class="stat-label">TOTAL TESTS</span><span class="stat-icon">📝</span></div><div class="stat-number" id="totalTests">0</div><div class="stat-label">Completed tests</div></div>
+  <div class="stat"><div class="stat-top"><span class="stat-label">DAILY STREAK</span><span class="stat-icon">🔥</span></div><div class="stat-number" id="streak">0</div><div class="stat-label">Days of practice</div></div>
+ </div>
+ <div class="content-grid">
+  <div class="panel"><div class="panel-head"><div><h3>🌈 Your weekly progress</h3><p>Your best WPM each day</p></div><span>📈</span></div><div class="chart" id="weeklyChart"></div></div>
+  <div class="panel"><div class="panel-head"><div><h3>🏅 Your achievements</h3><p>Little wins, big smiles</p></div></div><div class="badge-list" id="miniBadges"></div></div>
+ </div>
+ <div class="panel"><div class="panel-head"><div><h3>💗 Your daily goal</h3><p>Complete 3 typing tests today</p></div><strong id="goalText">0/3</strong></div><div class="progress-track"><div class="progress-fill" id="goalBar" style="width:0%"></div></div></div>
+</section>
+
+<section class="page" id="test">
+ <div class="section-title"><h2>⌨️ Typing test</h2><p>Ready, set, type! Let's beat your personal best.</p></div>
+ <div class="test-layout">
+  <div>
+   <div class="test-stats">
+    <div class="test-stat"><strong id="liveWpm">0</strong><span>WPM</span></div>
+    <div class="test-stat"><strong id="liveCpm">0</strong><span>CPM</span></div>
+    <div class="test-stat"><strong id="liveAccuracy">100%</strong><span>ACCURACY</span></div>
+    <div class="test-stat"><strong id="liveErrors">0</strong><span>ERRORS</span></div>
+   </div>
+   <div class="test-card">
+    <div class="test-controls">
+     <select id="difficulty" onchange="newPassage()"><option value="easy">🌱 Easy</option><option value="medium" selected>🌼 Medium</option><option value="hard">🔥 Hard</option></select>
+     <select id="duration" onchange="resetTest()"><option value="15">15 seconds</option><option value="30" selected>30 seconds</option><option value="60">60 seconds</option><option value="120">120 seconds</option></select>
+     <button class="btn small outline" onclick="resetTest()">↻ Restart</button>
+    </div>
+    <div class="passage" id="passage"></div>
+    <textarea class="typing-area" id="typingInput" placeholder="✨ Click here and start typing the passage..." spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:15px;flex-wrap:wrap">
+     <small style="color:var(--muted)">💡 Tip: Accuracy first, speed follows!</small>
+     <button class="btn" onclick="finishTest()">Finish test ✓</button>
+    </div>
+   </div>
+  </div>
+  <div class="test-side">
+   <div class="panel">
+    <div class="timer-label">TIME REMAINING</div><div class="timer" id="timer">30</div>
+    <div class="progress-track"><div class="progress-fill" id="timerBar" style="width:100%"></div></div>
+    <div class="side-stat"><span>Test status</span><strong id="testStatus">Ready</strong></div>
+    <div class="side-stat"><span>Characters typed</span><strong id="charCount">0</strong></div>
+    <div class="side-stat"><span>Correct characters</span><strong id="correctCount">0</strong></div>
+   </div>
+   <div class="panel" id="keyboardPanel"><div class="panel-head"><h3>⌨️ Keyboard</h3></div><div class="keyboard" id="keyboard"></div><small style="color:var(--muted);display:block;text-align:center;margin-top:10px">Your next key lights up ✨</small></div>
+  </div>
+ </div>
+</section>
+
+<section class="page" id="practice">
+ <div class="section-title"><h2>🎯 Practice lab</h2><p>Build your skills one small exercise at a time.</p></div>
+ <div class="content-grid">
+  <div class="panel"><div class="panel-head"><h3>🌸 Choose your practice</h3></div>
+   <div style="display:grid;gap:12px">
+    <button class="btn" onclick="practiceType('home')">🏡 Home row practice</button>
+    <button class="btn" onclick="practiceType('numbers')">🔢 Numbers practice</button>
+    <button class="btn" onclick="practiceType('symbols')">✨ Symbols practice</button>
+    <button class="btn" onclick="practiceType('sentences')">📖 Sentence practice</button>
+   </div>
+  </div>
+  <div class="panel"><h3>💡 Practice tips</h3><br><p style="color:var(--muted);line-height:2">• Keep your fingers on the home row.<br>• Avoid looking at your keyboard.<br>• Focus on accuracy before speed.<br>• Practise for 10 minutes every day.<br>• Take small breaks and enjoy learning!</p></div>
+ </div>
+ <div class="panel"><div class="panel-head"><h3 id="practiceTitle">🌷 Your practice passage</h3><button class="btn small" onclick="goTo('test')">Start practice →</button></div><p id="practiceText" style="font-size:21px;line-height:2;color:var(--muted)">Choose an exercise above to begin your practice journey.</p></div>
+</section>
+
+<section class="page" id="history">
+ <div class="section-title"><h2>📊 Score history</h2><p>Look how far you've come!</p></div>
+ <div class="stats">
+  <div class="stat"><div class="stat-label">AVERAGE WPM</div><div class="stat-number" id="avgWpm">0</div></div>
+  <div class="stat"><div class="stat-label">AVERAGE ACCURACY</div><div class="stat-number" id="avgAcc">0%</div></div>
+  <div class="stat"><div class="stat-label">TOTAL CHARACTERS</div><div class="stat-number" id="totalChars">0</div></div>
+  <div class="stat"><div class="stat-label">PERSONAL BEST</div><div class="stat-number" id="historyBest">0</div></div>
+ </div>
+ <div class="panel"><div class="panel-head"><h3>📝 Recent tests</h3><button class="btn small outline" onclick="clearHistory()">Clear history</button></div>
+  <div style="overflow-x:auto"><table class="history-table"><thead><tr><th>DATE</th><th>WPM</th><th>ACCURACY</th><th>ERRORS</th><th>TIME</th></tr></thead><tbody id="historyBody"></tbody></table></div>
+ </div>
+</section>
+
+<section class="page" id="achievements">
+ <div class="section-title"><h2>🏆 Achievement garden</h2><p>Every little milestone deserves a celebration!</p></div>
+ <div class="panel"><div class="badge-list" id="allBadges"></div></div>
+</section>
+
+<section class="page" id="settings">
+ <div class="section-title"><h2>⚙️ Your settings</h2><p>Make your typing studio feel like you.</p></div>
+ <div class="panel">
+  <div class="panel-head"><h3>🎨 Appearance</h3></div>
+  <div class="setting-row"><div><strong>Colour theme</strong><p>Choose your favourite colour palette</p></div><div class="theme-options" id="themeOptions"></div></div>
+  <div class="setting-row"><div><strong>Typing font size</strong><p>Adjust the passage text size</p></div><div><input type="range" min="16" max="32" value="24" id="fontSize"><strong id="fontValue">24px</strong></div></div>
+  <div class="setting-row"><div><strong>Show virtual keyboard</strong><p>Display the keyboard during tests</p></div><input type="checkbox" id="showKeyboard" checked></div>
+ </div>
+ <div class="panel">
+  <div class="panel-head"><h3>🎵 Sound & preferences</h3></div>
+  <div class="setting-row"><div><strong>Sound effects</strong><p>Play a sound when you finish a test</p></div><input type="checkbox" id="soundToggle" checked></div>
+  <div class="setting-row"><div><strong>Background music</strong><p>Soft music during your practice</p></div><input type="checkbox" id="musicToggle"></div>
+  <div class="setting-row"><div><strong>Daily reminder</strong><p>Show a friendly practice reminder</p></div><input type="checkbox" id="reminderToggle"></div>
+  <button class="btn" onclick="saveSettings()">Save preferences ✓</button>
+ </div>
+</section>
+</main>
+</div>
+
+<div class="result-modal" id="resultModal">
+ <div class="result-box">
+  <div class="result-emoji" id="resultEmoji">🎉</div>
+  <h2 id="resultTitle">Amazing work!</h2>
+  <p style="color:var(--muted)">You made progress today. Keep shining!</p>
+  <div class="result-score" id="resultWpm">0</div><strong>WORDS PER MINUTE</strong>
+  <div class="result-grid">
+   <div><strong id="resultAccuracy">0%</strong><small>ACCURACY</small></div>
+   <div><strong id="resultErrors">0</strong><small>ERRORS</small></div>
+   <div><strong id="resultCpm">0</strong><small>CPM</small></div>
+  </div>
+  <button class="btn" onclick="closeResult()">Continue ✨</button>
+  <button class="btn outline" onclick="closeResult();resetTest()" style="margin-left:5px">Try again ↻</button>
+ </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+
+const passages={
+ easy:[
+ "The sun is shining and the birds are singing. Every day is a new chance to learn something wonderful.",
+ "Practice makes progress. Keep your fingers moving and enjoy every little step along the way.",
+ "A happy mind and a kind heart can make every ordinary day feel special.",
+ "Small steps every day can take you to amazing places. Believe in yourself and keep going."
+ ],
+ medium:[
+ "Typing is a useful skill that helps us communicate faster and work more efficiently. Consistent practice makes a real difference.",
+ "Technology has changed the way we learn, create and connect with people around the world. Curiosity helps us grow.",
+ "Success does not happen overnight. It comes from patience, dedication, and the courage to try again after every mistake.",
+ "A good learner stays curious, asks questions, and finds exciting opportunities in every new challenge."
+ ],
+ hard:[
+ "Modern technology continues to transform education, communication, creativity, and productivity in remarkable ways.",
+ "Developing exceptional typing accuracy requires discipline, concentration, consistency, and deliberate repetition over time.",
+ "Programming encourages logical reasoning, structured thinking, experimentation, and creative problem-solving in everyday situations.",
+ "The most meaningful achievements often emerge from persistent effort, thoughtful reflection, and a willingness to improve."
+ ]
+};
+
+const themes={
+ lavender:{bg:"#f8f5ff",card:"#ffffff",text:"#39324d",muted:"#958da8",primary:"#9879e8",secondary:"#f5b7d2",soft:"#eee8ff",border:"#eee8f7"},
+ ocean:{bg:"#eff8ff",card:"#ffffff",text:"#233e59",muted:"#7c9bb4",primary:"#4f9dd8",secondary:"#8bd5e9",soft:"#dff2ff",border:"#dceef8"},
+ peach:{bg:"#fff6f0",card:"#ffffff",text:"#593c36",muted:"#a68a7e",primary:"#ed9b7b",secondary:"#f6c5a4",soft:"#ffeadf",border:"#f6e5db"},
+ mint:{bg:"#effaf5",card:"#ffffff",text:"#294c42",muted:"#829c91",primary:"#58b996",secondary:"#a6e1c7",soft:"#ddf5e9",border:"#d9eee4"},
+ rose:{bg:"#fff2f7",card:"#ffffff",text:"#593747",muted:"#a58a99",primary:"#dc83ad",secondary:"#f5b7d2",soft:"#ffe2ee",border:"#f4dfe9"},
+ dark:{bg:"#171528",card:"#242139",text:"#f3efff",muted:"#aaa3c4",primary:"#a98bff",secondary:"#dc9fc9",soft:"#37304f",border:"#39324f"}
+};
+
+let data=JSON.parse(localStorage.getItem("typeblitzData")||"{}");
+data.history=data.history||[];
+data.theme=data.theme||"lavender";
+data.fontSize=data.fontSize||24;
+data.sound=data.sound!==false;
+data.music=!!data.music;
+data.keyboard=data.keyboard!==false;
+data.reminder=!!data.reminder;
+let currentPassage="",timerInterval=null,timeLeft=30,totalTime=30,started=false,finished=false,startTime=0,practiceMode=false;
+let audioCtx=null,musicInterval=null;
+
+function save(){localStorage.setItem("typeblitzData",JSON.stringify(data))}
+function showToast(msg){let t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2400)}
+function goTo(page){let btn=[...document.querySelectorAll(".nav-btn")].find(b=>b.getAttribute("onclick")?.includes("'"+page+"'"));showPage(page,btn)}
+function showPage(page,btn){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ $(page).classList.add("active");
+ document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+ if(btn)btn.classList.add("active");
+ if(page==="history")renderHistory();
+ if(page==="dashboard")renderDashboard();
+ if(page==="achievements")renderBadges();
+}
+
+function applyTheme(name){
+ data.theme=name;let t=themes[name];
+ Object.entries(t).forEach(([k,v])=>document.documentElement.style.setProperty("--"+k,v));
+ document.querySelectorAll(".theme-dot").forEach(d=>d.classList.toggle("selected",d.dataset.theme===name));
+ save();
+}
+function setupThemes(){
+ $("themeOptions").innerHTML=Object.keys(themes).map(n=>`<button class="theme-dot ${n===data.theme?"selected":""}" data-theme="${n}" title="${n}" style="background:${themes[n].primary}" onclick="applyTheme('${n}')"></button>`).join("");
+}
+function changeFont(v){data.fontSize=Number(v);$("fontValue").textContent=v+"px";$("passage").style.fontSize=v+"px";save()}
+function saveSettings(){
+ data.sound=$("soundToggle").checked;data.music=$("musicToggle").checked;
+ data.keyboard=$("showKeyboard").checked;data.reminder=$("reminderToggle").checked;
+ $("keyboardPanel").style.display=data.keyboard?"block":"none";
+ if(data.music)startMusic();else stopMusic();
+ save();showToast("Your preferences are saved 💗");
+}
+function initSettings(){
+ $("fontSize").value=data.fontSize;$("fontValue").textContent=data.fontSize+"px";
+ $("soundToggle").checked=data.sound;$("musicToggle").checked=data.music;
+ $("showKeyboard").checked=data.keyboard;$("reminderToggle").checked=data.reminder;
+ $("passage").style.fontSize=data.fontSize+"px";
+ $("keyboardPanel").style.display=data.keyboard?"block":"none";
+}
+function playSound(freq=600){
+ if(!data.sound)return;
+ try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.value=freq;g.gain.value=.08;o.start();g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.25);o.stop(audioCtx.currentTime+.26)}catch(e){}
+}
+function startMusic(){
+ if(musicInterval)return;
+ try{
+  audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();
+  let notes=[261.63,329.63,392,329.63],i=0;
+  musicInterval=setInterval(()=>{
+   if(!data.music)return;
+   let o=audioCtx.createOscillator(),g=audioCtx.createGain();
+   o.type="sine";o.frequency.value=notes[i++%notes.length];g.gain.value=.018;
+   o.connect(g);g.connect(audioCtx.destination);o.start();
+   g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+1.2);o.stop(audioCtx.currentTime+1.25);
+  },1300);
+ }catch(e){}
+}
+function stopMusic(){clearInterval(musicInterval);musicInterval=null}
+
+function makeKeyboard(){
+ const rows=["qwertyuiop","asdfghjkl","zxcvbnm"];
+ $("keyboard").innerHTML=rows.map(r=>`<div class="key-row">${r.split("").map(k=>`<div class="key" id="key-${k}">${k.toUpperCase()}</div>`).join("")}</div>`).join("");
+}
+function highlightKey(){
+ document.querySelectorAll(".key").forEach(k=>k.classList.remove("active"));
+ let input=$("typingInput").value,expected=currentPassage[input.length];
+ if(expected){let el=$("key-"+expected.toLowerCase());if(el)el.classList.add("active")}
+}
+function newPassage(){
+ let level=$("difficulty").value,list=passages[level];
+ currentPassage=list[Math.floor(Math.random()*list.length)];
+ renderPassage();resetTest(false);
+}
+function renderPassage(){
+ $("passage").innerHTML=currentPassage.split("").map((c,i)=>`<span id="char-${i}">${escapeHTML(c)}</span>`).join("");
+}
+function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+function resetTest(loadNew=true){
+ clearInterval(timerInterval);started=false;finished=false;
+ totalTime=Number($("duration").value);timeLeft=totalTime;
+ $("timer").textContent=timeLeft;$("timerBar").style.width="100%";
+ $("typingInput").disabled=false;$("typingInput").value="";
+ $("testStatus").textContent="Ready";
+ $("liveWpm").textContent="0";$("liveCpm").textContent="0";
+ $("liveAccuracy").textContent="100%";$("liveErrors").textContent="0";
+ $("charCount").textContent="0";$("correctCount").textContent="0";
+ if(loadNew){let list=passages[$("difficulty").value];currentPassage=list[Math.floor(Math.random()*list.length)]}
+ renderPassage();highlightKey();
+}
+function beginTimer(){
+ started=true;startTime=Date.now();$("testStatus").textContent="Typing";
+ timerInterval=setInterval(()=>{
+  timeLeft--;if(timeLeft<0)timeLeft=0;
+  $("timer").textContent=timeLeft;
+  $("timerBar").style.width=(timeLeft/totalTime*100)+"%";
+  updateStats();
+  if(timeLeft<=0)finishTest();
+ },1000);
+}
+function updateStats(){
+ let typed=$("typingInput").value,correct=0,errors=0;
+ for(let i=0;i<typed.length;i++){if(typed[i]===currentPassage[i])correct++;else errors++}
+ let elapsed=Math.max(1,(Date.now()-startTime)/60000);
+ let wpm=Math.round(correct/5/elapsed);
+ let accuracy=typed.length?Math.round(correct/typed.length*100):100;
+ $("liveWpm").textContent=wpm;$("liveCpm").textContent=Math.round(correct/elapsed);
+ $("liveAccuracy").textContent=accuracy+"%";$("liveErrors").textContent=errors;
+ $("charCount").textContent=typed.length;$("correctCount").textContent=correct;
+}
+function updatePassage(){
+ let typed=$("typingInput").value;
+ for(let i=0;i<currentPassage.length;i++){
+  let el=$("char-"+i);if(!el)continue;
+  el.className="";
+  if(i<typed.length)el.classList.add(typed[i]===currentPassage[i]?"correct":"wrong");
+  else if(i===typed.length)el.classList.add("current");
+ }
+}
+$("typingInput").addEventListener("input",()=>{
+ if(finished)return;
+ if(!started&&$("typingInput").value.length>0)beginTimer();
+ updatePassage();updateStats();highlightKey();
+ if($("typingInput").value.length>=currentPassage.length)finishTest();
+});
+$("typingInput").addEventListener("keydown",e=>{
+ if(e.key==="Tab"){e.preventDefault()}
+});
+function finishTest(){
+ if(finished)return;
+ finished=true;clearInterval(timerInterval);
+ $("typingInput").disabled=true;
+ let typed=$("typingInput").value,correct=0,errors=0;
+ for(let i=0;i<typed.length;i++){if(typed[i]===currentPassage[i])correct++;else errors++}
+ let elapsed=started?Math.max(1,(Date.now()-startTime)/60000):1/60;
+ let wpm=Math.round(correct/5/elapsed);
+ let cpm=Math.round(correct/elapsed);
+ let accuracy=typed.length?Math.round(correct/typed.length*100):0;
+ let result={date:new Date().toISOString(),wpm,accuracy,errors,cpm,chars:typed.length,duration:totalTime};
+ if(typed.length>0){
+  data.history.unshift(result);data.history=data.history.slice(0,100);save();
+  celebrate(wpm);playSound(800);
+ }
+ $("resultWpm").textContent=wpm;$("resultAccuracy").textContent=accuracy+"%";
+ $("resultErrors").textContent=errors;$("resultCpm").textContent=cpm;
+ $("resultEmoji").textContent=wpm>=60?"🏆":wpm>=35?"🌟":"🌷";
+ $("resultTitle").textContent=wpm>=60?"Typing superstar!":wpm>=35?"Amazing progress!":"Lovely effort!";
+ $("resultModal").classList.add("show");
+ $("testStatus").textContent="Completed";
+ renderDashboard();
+}
+function closeResult(){$("resultModal").classList.remove("show")}
+function celebrate(wpm){
+ if(wpm<20)return;
+ for(let i=0;i<85;i++){
+  let c=document.createElement("div");c.className="confetti";
+  c.style.left=Math.random()*100+"%";c.style.background=["#a98bff","#f5b7d2","#65c9a4","#f3c66b","#70c5ed"][i%5];
+  c.style.animationDelay=Math.random()*.8+"s";c.style.transform=`rotate(${Math.random()*360}deg)`;
+  document.body.appendChild(c);setTimeout(()=>c.remove(),3500);
+ }
+}
+function practiceType(type){
+ let obj={
+  home:["🏡 Home row practice","asdf jkl; asdf jkl; fjdk sla; ask lad fall sad"],
+  numbers:["🔢 Numbers practice","12345 67890 2026 4567 8901 24680 13579"],
+  symbols:["✨ Symbols practice","! @ # $ % ^ & * ( ) - _ + = { } [ ] : ;"],
+  sentences:["📖 Sentence practice","Learning something new every day makes life more exciting and beautiful."]
+ };
+ $("practiceTitle").textContent=obj[type][0];$("practiceText").textContent=obj[type][1];
+ currentPassage=obj[type][1];$("difficulty").value="easy";renderPassage();
+ goTo("test");resetTest(false);
+}
+function getBest(){return Math.max(0,...data.history.map(x=>x.wpm))}
+function getBestAcc(){return Math.max(0,...data.history.map(x=>x.accuracy))}
+function renderDashboard(){
+ $("bestWpm").textContent=getBest();$("bestAccuracy").textContent=getBestAcc()+"%";
+ $("totalTests").textContent=data.history.length;
+ $("levelText").textContent="Level "+(1+Math.floor(data.history.length/5))+" Explorer";
+ let dates=[...new Set(data.history.map(x=>x.date.slice(0,10)))];
+ let streak=0,day=new Date();day.setHours(0,0,0,0);
+ for(let i=0;i<365;i++){let key=day.toISOString().slice(0,10);if(dates.includes(key)){streak++;day.setDate(day.getDate()-1)}else break}
+ $("streak").textContent=streak;
+ let days=[];
+ for(let i=6;i>=0;i--){let d=new Date();d.setDate(d.getDate()-i);let key=d.toISOString().slice(0,10);let best=Math.max(0,...data.history.filter(x=>x.date.slice(0,10)===key).map(x=>x.wpm));days.push({label:d.toLocaleDateString("en",{weekday:"short"}),best})}
+ let max=Math.max(20,...days.map(x=>x.best));
+ $("weeklyChart").innerHTML=days.map(x=>`<div class="bar-wrap"><strong style="font-size:10px">${x.best||""}</strong><div class="bar" style="height:${Math.max(4,x.best/max*100)}%"></div><small>${x.label}</small></div>`).join("");
+ let today=new Date().toISOString().slice(0,10);
+ let count=data.history.filter(x=>x.date.slice(0,10)===today).length;
+ $("goalText").textContent=Math.min(count,3)+"/3";$("goalBar").style.width=Math.min(count/3*100,100)+"%";
+ renderMiniBadges();
+}
+const badges=[
+ {icon:"🌱",name:"First Steps",desc:"Complete your first test",test:h=>h.length>=1},
+ {icon:"⚡",name:"Speedy Star",desc:"Reach 30 WPM",test:h=>h.some(x=>x.wpm>=30)},
+ {icon:"🚀",name:"Rocket Fingers",desc:"Reach 50 WPM",test:h=>h.some(x=>x.wpm>=50)},
+ {icon:"🎯",name:"Sharp Shooter",desc:"Reach 95% accuracy",test:h=>h.some(x=>x.accuracy>=95)},
+ {icon:"💎",name:"Diamond Focus",desc:"Complete 10 tests",test:h=>h.length>=10},
+ {icon:"🔥",name:"Practice Lover",desc:"Complete 25 tests",test:h=>h.length>=25}
+];
+function badgeHTML(b,unlocked){return `<div class="badge-item" style="opacity:${unlocked?1:.4}"><span>${unlocked?b.icon:"🔒"}</span><strong>${b.name}</strong><small>${unlocked?"Unlocked!":b.desc}</small></div>`}
+function renderMiniBadges(){$("miniBadges").innerHTML=badges.slice(0,3).map(b=>badgeHTML(b,b.test(data.history))).join("")}
+function renderBadges(){$("allBadges").innerHTML=badges.map(b=>badgeHTML(b,b.test(data.history))).join("")}
+function renderHistory(){
+ let h=data.history;
+ $("avgWpm").textContent=h.length?Math.round(h.reduce((s,x)=>s+x.wpm,0)/h.length):0;
+ $("avgAcc").textContent=h.length?Math.round(h.reduce((s,x)=>s+x.accuracy,0)/h.length)+"%":"0%";
+ $("totalChars").textContent=h.reduce((s,x)=>s+x.chars,0);
+ $("historyBest").textContent=getBest();
+ $("historyBody").innerHTML=h.length?h.map(x=>`<tr><td>${new Date(x.date).toLocaleString()}</td><td><strong>${x.wpm}</strong></td><td>${x.accuracy}%</td><td>${x.errors}</td><td>${x.duration}s</td></tr>`).join(""):`<tr><td colspan="5" class="empty">🌷 No tests yet. Start typing to see your scores!</td></tr>`;
+}
+function clearHistory(){if(confirm("Are you sure you want to clear all your typing history?")){data.history=[];save();renderHistory();renderDashboard();showToast("History cleared")}}
+
+$("fontSize").addEventListener("input",e=>changeFont(e.target.value));
+$("showKeyboard").addEventListener("change",e=>$("keyboardPanel").style.display=e.target.checked?"block":"none");
+$("musicToggle").addEventListener("change",e=>{if(e.target.checked){data.music=true;startMusic()}else{data.music=false;stopMusic()}});
+$("soundToggle").addEventListener("change",e=>{data.sound=e.target.checked});
+$("reminderToggle").addEventListener("change",e=>{data.reminder=e.target.checked});
+
+function initialize(){
+ setupThemes();applyTheme(data.theme);initSettings();makeKeyboard();
+ $("greeting").textContent="Hey, Typing Star! ✨";
+ newPassage();renderDashboard();
+ if(data.reminder&&!data.history.some(x=>x.date.slice(0,10)===new Date().toISOString().slice(0,10))){
+  setTimeout(()=>showToast("🌷 A little typing practice today?"),1000);
+ }
+}
+initialize();
+</script>
+</body>
+</html>
